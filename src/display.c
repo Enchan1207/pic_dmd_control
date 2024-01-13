@@ -64,6 +64,9 @@ void display_init() {
 
 void display_setVisible(bool state) {
     TMR0IE = state;
+    if (!state) {
+        _clearColumn();
+    }
 }
 
 void display_onUpdate() {
