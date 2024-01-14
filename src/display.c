@@ -8,6 +8,9 @@
 /// @brief 表示バッファ
 static volatile uint8_t displayBuffer[8];
 
+/// @brief 表示更新要求フラグ
+static volatile bool shouldUpdate = false;
+
 /**
  * @brief ディスプレイバッファの初期化
  */
@@ -72,20 +75,26 @@ void display_setVisible(bool state) {
     }
 }
 
-void display_onUpdate(void) {
+void display_setNeedsUpdate(void) {
+    shouldUpdate = true;
+}
+
+void display_updateIfNeeded(void) {
     static uint8_t column = 0;
 
-    // 表示データ消去
+    // 更新要求が来ていなければ何もしない
+    if (!shouldUpdate) {
+        return;
+    }
+
+    // I/Oをリセットして行を進め、列に対応するデータを設定
     _clearColumn();
-
-    // 行移動
     _shiftColumn(column);
-
-    // 列に対応するデータを設定
     _setColumnData(displayBuffer[column]);
 
-    // 次の列へ
+    // 次の列へ移動し、更新要求をリセット
     column = (column + 1) % 8;
+    shouldUpdate = false;
 }
 
 volatile uint8_t* display_getDrawBuffer(void) {

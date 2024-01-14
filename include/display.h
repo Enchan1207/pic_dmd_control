@@ -21,10 +21,16 @@ void display_init(void);
 void display_setVisible(bool state);
 
 /**
- * @brief 表示内容更新割込み
- * @note ISRから呼ばれることを想定しています。表示列をシフトし、ディスプレイに出力します。
+ * @brief ディスプレイの更新要求をセット
+ * @note ISRから呼ばれることを想定しています。内部の更新要求フラグをセットします。
  */
-void display_onUpdate(void);
+void display_setNeedsUpdate(void);
+
+/**
+ * @brief 表示内容の更新
+ * @note 列を移動し、データを反映します。
+ */
+void display_updateIfNeeded(void);
 
 /**
  * @brief 描画バッファを取得
