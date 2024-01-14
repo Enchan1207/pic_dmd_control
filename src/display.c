@@ -6,17 +6,17 @@
 #include <xc.h>
 
 /// @brief 表示バッファ
-static uint8_t displayBuffer[8];
+static volatile uint8_t displayBuffer[8];
 
 /**
  * @brief ディスプレイバッファの初期化
  */
-static void _initDisplayBuffer();
+static void _initDisplayBuffer(void);
 
 /**
  * @brief 列消去
  */
-static void _clearColumn();
+static void _clearColumn(void);
 
 /**
  * @brief 列出力内容設定
@@ -32,7 +32,7 @@ static void _setColumnData(uint8_t data);
  */
 static void _shiftColumn(uint8_t column);
 
-void display_init() {
+void display_init(void) {
     // IO設定
     // 行ピン
     TRISA6 = 0;
@@ -60,6 +60,9 @@ void display_init() {
     // 225us = 4kHzなので若干レート的には遅い
     PSA = 1;
     TMR0 = 131;
+
+    // ディスプレイバッファ初期化
+    _initDisplayBuffer();
 }
 
 void display_setVisible(bool state) {
@@ -69,7 +72,7 @@ void display_setVisible(bool state) {
     }
 }
 
-void display_onUpdate() {
+void display_onUpdate(void) {
     static uint8_t column = 0;
 
     // 表示データ消去
@@ -85,17 +88,17 @@ void display_onUpdate() {
     column = (column + 1) % 8;
 }
 
-uint8_t* display_getDrawBuffer() {
+volatile uint8_t* display_getDrawBuffer(void) {
     return displayBuffer;
 }
 
-static void _initDisplayBuffer() {
+static void _initDisplayBuffer(void) {
     for (uint8_t n = 0; n < 8; n++) {
         displayBuffer[n] = 0;
     }
 }
 
-static void _clearColumn() {
+static void _clearColumn(void) {
     LATA6 = 0;
     LATC0 = 0;
     LATC1 = 0;

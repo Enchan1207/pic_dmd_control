@@ -10,7 +10,7 @@
 /**
  * @brief ディスプレイモジュール初期化
  */
-void display_init();
+void display_init(void);
 
 /**
  * @brief 表示状態を設定
@@ -24,13 +24,13 @@ void display_setVisible(bool state);
  * @brief 表示内容更新割込み
  * @note ISRから呼ばれることを想定しています。表示列をシフトし、ディスプレイに出力します。
  */
-void display_onUpdate();
+void display_onUpdate(void);
 
 /**
  * @brief 描画バッファを取得
  *
  * @return uint8_t* 描画バッファへのポインタ
  */
-uint8_t* display_getDrawBuffer();
+volatile uint8_t* display_getDrawBuffer(void);
 
 #endif /* DISPLAY_H */
