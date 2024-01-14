@@ -42,11 +42,21 @@ static int8_t _clipValue(int8_t n, int8_t min, int8_t max) {
  * @param obj 描画対象のオブジェクト
  */
 static void _renderer_renderObject(uint8_t* displayBuffer, const struct RenderObject* obj) {
+    // 範囲外なら描画しない
+    if (obj->sx > 7 || obj->sy > 7) {
+        return;
+    }
+
     // 実際に描画される範囲を特定
     uint8_t startX = (uint8_t)_clipValue(obj->sx, 0, 7);
     uint8_t endX = (uint8_t)_clipValue(obj->sx + obj->width, 0, 8);
     uint8_t startY = (uint8_t)_clipValue(obj->sy, 0, 7);
     uint8_t endY = (uint8_t)_clipValue(obj->sy + obj->height, 0, 8);
+
+    // 描画サイズがゼロなら何もせず戻る
+    if (endX - startX == 0 || endY - startY == 0) {
+        return;
+    }
 
     // バッファに反映
     for (uint8_t x = startX; x < endX; x++) {
