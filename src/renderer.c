@@ -6,7 +6,7 @@
 /// @brief オブジェクトリスト
 struct RenderObject renderObjects[RENDERER_MAX_OBJECT];
 
-void renderer_init() {
+void renderer_init(void) {
     for (uint8_t i = 0; i < RENDERER_MAX_OBJECT; i++) {
         renderObjects[i].isVisible = false;
         renderObjects[i].sx = 0;
@@ -60,7 +60,10 @@ static void _renderer_renderObject(uint8_t* displayBuffer, const struct RenderOb
 
     // バッファに反映
     for (uint8_t x = startX; x < endX; x++) {
-        displayBuffer[x] |= ((1 << (endY - startY + 1)) - 1) << (endY - startY);
+        // y軸の終点-始点から1の数を求め、その分だけビットを立てた数値を生成
+        // height=3 の場合、1<<3 は 0b01000 1引いて 0b0111
+        // このままだとy軸が上下逆になってしまうので、差分を左シフト
+        displayBuffer[x] |= ((uint8_t)(1 << (endY - startY)) - 1) << (8 - endY);
     }
 }
 

@@ -23,10 +23,10 @@ struct RenderObject {
     int8_t sy;
 
     /// @brief 幅
-    uint8_t width;
+    uint8_t width : 4;
 
     /// @brief 高さ
-    uint8_t height;
+    uint8_t height : 4;
 };
 
 extern struct RenderObject renderObjects[RENDERER_MAX_OBJECT];
@@ -34,7 +34,7 @@ extern struct RenderObject renderObjects[RENDERER_MAX_OBJECT];
 /**
  * @brief オブジェクトレンダラを初期化
  */
-void renderer_init();
+void renderer_init(void);
 
 /**
  * @brief オブジェクトをバッファにレンダリング
