@@ -33,23 +33,20 @@ void main(void) {
     struct RenderObject* object_1 = &(renderObjects[0]);
     struct RenderObject* object_2 = &(renderObjects[1]);
     object_1->sx = 0;
-    object_1->sy = 0;
+    object_1->sy = 1;
     object_1->width = 3;
-    object_1->height = 2;
+    object_1->height = 1;
     object_1->isVisible = true;
 
     object_2->sx = 3;
-    object_2->sy = 0;
+    object_2->sy = 5;
     object_2->width = 2;
     object_2->height = 3;
     object_2->isVisible = true;
 
-    // ディスプレイバッファに描画
-    renderer_renderObjects(displayBuffer);
-
     uint16_t lcnt = 0;
     while (true) {
-        if (lcnt % 800 == 0) {
+        if (lcnt % 200 == 0) {
             object_1->sx++;
             object_2->sy++;
             if (object_1->sx > 10) {
