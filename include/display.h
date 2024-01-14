@@ -31,6 +31,6 @@ void display_onUpdate(void);
  *
  * @return uint8_t* 描画バッファへのポインタ
  */
-volatile uint8_t* display_getDrawBuffer(void);
+uint8_t* display_getDrawBuffer(void);
 
 #endif /* DISPLAY_H */
