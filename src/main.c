@@ -30,40 +30,34 @@ void main(void) {
     // 描画バッファ取得
     uint8_t* displayBuffer = display_getDrawBuffer();
 
-    struct RenderObject* object_1 = &(renderObjects[0]);
-    struct RenderObject* object_2 = &(renderObjects[1]);
-    object_1->sx = 0;
-    object_1->sy = 1;
-    object_1->width = 3;
-    object_1->height = 1;
-    object_1->isVisible = true;
+    // オブジェクトを初期化
+    for (uint8_t i = 0; i < RENDERER_MAX_OBJECT; i++) {
+        struct RenderObject* obj = renderObjects + i;
+        obj->isVisible = true;
+        obj->sx = i >> 1;
+        obj->sy = i;
+        obj->width = 1;
+        obj->height = 1;
+    }
 
-    object_2->sx = 3;
-    object_2->sy = 5;
-    object_2->width = 2;
-    object_2->height = 3;
-    object_2->isVisible = true;
+    // 表示を開始
+    display_setVisible(true);
 
-    uint16_t lcnt = 0;
+    // タイマ6を計時機として構成し、開始
+    // ソースクロック1MHz, 分周比64 -> 64usごとにカウントアップ
+    T6CONbits.T6CKPS = 3;
+    PR6 = 0xFF;
+    T6CONbits.TMR6ON = 1;
+    TMR6IE = 1;
+
+    // オブジェクトをレンダリング
+    renderer_renderObjects(displayBuffer);
+
+    // レンダリングが終了したところで止めてTMRレジスタをディスプレイバッファに書き出す
+    T6CONbits.TMR6ON = 0;
+    displayBuffer[6] = TMR6IF;
+    displayBuffer[7] = TMR6;
+
     while (true) {
-        if (lcnt % 200 == 0) {
-            object_1->sx++;
-            object_2->sy++;
-            if (object_1->sx > 10) {
-                object_1->sx = -5;
-            }
-            if (object_2->sy > 10) {
-                object_2->sy = -5;
-            }
-
-            display_setVisible(false);
-            memset(displayBuffer, 0x00, 8);
-            displayBuffer[0] = object_1->sx + 5;
-            displayBuffer[7] = object_2->sy + 5;
-            renderer_renderObjects(displayBuffer);
-            display_setVisible(true);
-        }
-
-        lcnt++;
     }
 }
