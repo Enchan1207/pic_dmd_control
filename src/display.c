@@ -6,7 +6,7 @@
 #include <xc.h>
 
 /// @brief 表示バッファ
-static volatile uint8_t displayBuffer[8];
+static uint8_t displayBuffer[8];
 
 /**
  * @brief ディスプレイバッファの初期化
@@ -56,8 +56,8 @@ void display_init(void) {
     // クロック設定 1MHz
     TMR0CS = 0;
 
-    // 分周比1, カウンタ31 -> 256-31=225usごとに割込み
-    // 225us = 4kHzなので若干レート的には遅い
+    // 分周比1 -> 256 - TMR0 (us) ごとに割込みがかかる
+    // TMR0=131の場合125usごとに割込むので、8列表示するとちょうど1msで表示が完了することになる
     PSA = 1;
     TMR0 = 131;
 
@@ -88,7 +88,7 @@ void display_onUpdate(void) {
     column = (column + 1) % 8;
 }
 
-volatile uint8_t* display_getDrawBuffer(void) {
+uint8_t* display_getDrawBuffer(void) {
     return displayBuffer;
 }
 
