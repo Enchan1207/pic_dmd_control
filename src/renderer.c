@@ -1,0 +1,66 @@
+//
+// オブジェクトレンダラ
+//
+#include "renderer.h"
+
+/// @brief オブジェクトリスト
+struct RenderObject renderObjects[RENDERER_MAX_OBJECT];
+
+void renderer_init() {
+    for (uint8_t i = 0; i < RENDERER_MAX_OBJECT; i++) {
+        renderObjects[i].isVisible = false;
+        renderObjects[i].sx = 0;
+        renderObjects[i].sy = 0;
+        renderObjects[i].width = 0;
+        renderObjects[i].height = 0;
+    }
+}
+
+/**
+ * @brief 値をクリップする
+ *
+ * @param n 値
+ * @param min 最小値
+ * @param max 最大値
+ *
+ * @return int8_t
+ */
+static int8_t _clipValue(int8_t n, int8_t min, int8_t max) {
+    if (n < min) {
+        return min;
+    }
+    if (n > max) {
+        return max;
+    }
+    return n;
+}
+
+/**
+ * @brief オブジェクトをディスプレイバッファに描画
+ *
+ * @param displayBuffer ディスプレイバッファ
+ * @param obj 描画対象のオブジェクト
+ */
+static void _renderer_renderObject(uint8_t* displayBuffer, const struct RenderObject* obj) {
+    // 実際に描画される範囲を特定
+    uint8_t startX = (uint8_t)_clipValue(obj->sx, 0, 7);
+    uint8_t endX = (uint8_t)_clipValue(obj->sx + obj->width, 0, 8);
+    uint8_t startY = (uint8_t)_clipValue(obj->sy, 0, 7);
+    uint8_t endY = (uint8_t)_clipValue(obj->sy + obj->height, 0, 8);
+
+    // バッファに反映
+    for (uint8_t x = startX; x < endX; x++) {
+        displayBuffer[x] |= ((1 << (endY - startY + 1)) - 1) << (endY - startY);
+    }
+}
+
+void renderer_renderObjects(uint8_t* displayBuffer) {
+    for (uint8_t i = 0; i < RENDERER_MAX_OBJECT; i++) {
+        struct RenderObject* obj = renderObjects + i;
+        // 非表示オブジェクトなら飛ばす
+        if (!obj->isVisible) {
+            continue;
+        }
+        _renderer_renderObject(displayBuffer, obj);
+    }
+}

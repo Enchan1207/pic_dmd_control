@@ -9,6 +9,7 @@ target_sources(app PRIVATE
     display.c
     isrs.c
     main.c
+    renderer.c
 )
 target_include_directories(app PUBLIC
     ${PROJECT_SOURCE_DIR}/include
