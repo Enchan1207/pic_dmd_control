@@ -23,10 +23,22 @@ void main(void) {
     display_setVisible(true);
 
     // 描画バッファ取得+編集
-    uint8_t* displayBuffer = display_getDrawBuffer();
+    volatile uint8_t* displayBuffer = display_getDrawBuffer();
     displayBuffer[2] = 0x50;
     displayBuffer[5] = 0x05;
 
+    uint8_t lcnt = 0;
     while (true) {
+        displayBuffer[0] = lcnt;
+
+        if (lcnt % 64 == 0) {
+            displayBuffer[1] = 0xFF;
+        }
+        if (lcnt % 192 == 0) {
+            displayBuffer[1] = 0x00;
+        }
+
+        lcnt++;
+        __delay_ms(1);
     }
 }
